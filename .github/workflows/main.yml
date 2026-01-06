@@ -1,4 +1,4 @@
-name: Generate Everything (Snake & Stats)
+name: The Ultimate Profile Engine
 
 on:
   schedule:
@@ -7,21 +7,19 @@ on:
 
 jobs:
   build:
-    name: Update Data
+    name: Build Dashboard
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      # 1. Baixa o repositório
       - uses: actions/checkout@v4
 
-      # 2. Instala Node.js v22 (Resolve o erro EBADENGINE)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      # 3. Gera a Cobrinha (Snake)
+      # 1. Geração da Cobrinha (Snake)
       - uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -29,30 +27,40 @@ jobs:
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      # 4. DESTRANCA A PASTA (Resolve o erro EACCES)
-      # Como a cobrinha roda em container, ela bloqueia a pasta. Isso libera.
-      - name: Fix permissions
-        run: sudo chmod -R 777 dist
-
-      # 5. Gera os Stats (Agora com permissão de escrita)
-      - name: Generate Stats
+      # 2. Geração dos Stats Clássicos (Base de Dados)
+      - name: Generate Core Stats
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: stats
           token: ${{ secrets.GITHUB_TOKEN }}
-          options: username=${{ github.repository_owner }}&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true
+          # Tema 'transparent' para se adaptar ao fundo do painel + rank S/A/B
+          options: username=${{ github.repository_owner }}&show_icons=true&theme=transparent&include_all_commits=true&count_private=true&hide_border=true&title_color=0077B5&text_color=F7F7F7&icon_color=E4405F
           path: dist/stats.svg 
 
-      # 6. Gera o Top Langs
+      # 3. Geração das Top Langs (O Radar)
       - name: Generate Top Langs
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: top-langs
           token: ${{ secrets.GITHUB_TOKEN }}
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&theme=tokyonight
+          options: username=${{ github.repository_owner }}&layout=donut&langs_count=6&theme=transparent&hide_border=true&title_color=0077B5&text_color=F7F7F7
           path: dist/top-langs.svg
 
-      # 7. Envia TUDO para a branch 'output'
+      # 4. Geração Isométrica 3D (A Cidade de Código)
+      - name: Generate Isometric Graph
+        uses: lowlighter/metrics@latest
+        with:
+          filename: dist/isometric.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ""
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: half-year
+
+      # 5. Destranca permissões e Deploy
+      - name: Unlock & Deploy
+        run: |
+          sudo chmod -R 777 dist
+      
       - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
