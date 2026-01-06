@@ -1,9 +1,9 @@
-name: The Ultimate Profile Engine
+name: Ultimate Profile Engine (Safe Mode)
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # Roda a cada 12 horas
-  workflow_dispatch: # Permite rodar manualmente
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '22'
 
-      # 1. GERA A COBRINHA (Isso cria a pasta 'dist' bloqueada)
+      # 1. GERA A COBRINHA
       - uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -27,13 +27,11 @@ jobs:
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      # 2. CORREÇÃO DE PERMISSÃO (CRUCIAL: Movemos para cá!)
-      # Libera a pasta 'dist' para os próximos passos poderem escrever nela
+      # 2. CORREÇÃO DE PERMISSÃO (Essencial)
       - name: Fix permissions
-        run: |
-          sudo chmod -R 777 dist
+        run: sudo chmod -R 777 dist
 
-      # 3. Geração dos Stats Clássicos
+      # 3. GERA OS STATS
       - name: Generate Core Stats
         uses: readme-tools/github-readme-stats-action@v1
         with:
@@ -42,7 +40,7 @@ jobs:
           options: username=${{ github.repository_owner }}&show_icons=true&theme=transparent&include_all_commits=true&count_private=true&hide_border=true&title_color=0077B5&text_color=F7F7F7&icon_color=E4405F
           path: dist/stats.svg 
 
-      # 4. Geração das Top Langs
+      # 4. GERA TOP LANGS
       - name: Generate Top Langs
         uses: readme-tools/github-readme-stats-action@v1
         with:
@@ -51,9 +49,11 @@ jobs:
           options: username=${{ github.repository_owner }}&layout=donut&langs_count=6&theme=transparent&hide_border=true&title_color=0077B5&text_color=F7F7F7
           path: dist/top-langs.svg
 
-      # 5. Geração Isométrica 3D (Metrics)
+      # 5. ISOMETRIC 3D (Com proteção contra erro)
+      # Se falhar, ele apenas pula e não quebra o resto
       - name: Generate Isometric Graph
         uses: lowlighter/metrics@latest
+        continue-on-error: true 
         with:
           filename: dist/isometric.svg
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
 
-      # 6. Deploy para a branch de saída
+      # 6. SALVA TUDO
       - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
