@@ -1,9 +1,9 @@
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Press+Start+2P&size=18&pause=1000&color=F7F7F7&random=false&width=435&lines=Ol%C3%A1%2C+eu+sou+o+Jo%C3%A3o+Vitor)](https://git.io/typing-svg)
 
- <div>
-   <a href="https://github.com/jnz1">
-   <img height="180em" src="https://github-readme-stats.vercel.app/api?username=jnz1&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true"/>
-   <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=jnz1&layout=compact&langs_count=6&theme=tokyonight"/>
+ <div style="display: flex; justify-content: center; gap: 10px;">
+    <img height="180em" src="https://github.com/jnz1/jnz1/raw/output/stats.svg" alt="Stats do João"/>
+    <img height="180em" src="https://github.com/jnz1/jnz1/raw/output/top-langs.svg" alt="Top Langs do João"/>
+  </div>
 
 </div>
 <div style="display: inline_block"><br>
