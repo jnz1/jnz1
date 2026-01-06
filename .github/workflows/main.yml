@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '22'
 
-      # 1. Geração da Cobrinha (Snake)
+      # 1. GERA A COBRINHA (Isso cria a pasta 'dist' bloqueada)
       - uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -27,17 +27,22 @@ jobs:
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      # 2. Geração dos Stats Clássicos (Base de Dados)
+      # 2. CORREÇÃO DE PERMISSÃO (CRUCIAL: Movemos para cá!)
+      # Libera a pasta 'dist' para os próximos passos poderem escrever nela
+      - name: Fix permissions
+        run: |
+          sudo chmod -R 777 dist
+
+      # 3. Geração dos Stats Clássicos
       - name: Generate Core Stats
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: stats
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Tema 'transparent' para se adaptar ao fundo do painel + rank S/A/B
           options: username=${{ github.repository_owner }}&show_icons=true&theme=transparent&include_all_commits=true&count_private=true&hide_border=true&title_color=0077B5&text_color=F7F7F7&icon_color=E4405F
           path: dist/stats.svg 
 
-      # 3. Geração das Top Langs (O Radar)
+      # 4. Geração das Top Langs
       - name: Generate Top Langs
         uses: readme-tools/github-readme-stats-action@v1
         with:
@@ -46,7 +51,7 @@ jobs:
           options: username=${{ github.repository_owner }}&layout=donut&langs_count=6&theme=transparent&hide_border=true&title_color=0077B5&text_color=F7F7F7
           path: dist/top-langs.svg
 
-      # 4. Geração Isométrica 3D (A Cidade de Código)
+      # 5. Geração Isométrica 3D (Metrics)
       - name: Generate Isometric Graph
         uses: lowlighter/metrics@latest
         with:
@@ -56,11 +61,7 @@ jobs:
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
 
-      # 5. Destranca permissões e Deploy
-      - name: Unlock & Deploy
-        run: |
-          sudo chmod -R 777 dist
-      
+      # 6. Deploy para a branch de saída
       - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
