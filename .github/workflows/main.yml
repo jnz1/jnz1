@@ -15,7 +15,13 @@ jobs:
       # 1. Baixa o repositório
       - uses: actions/checkout@v4
 
-      # 2. Gera a Cobrinha (Salva na pasta 'dist')
+      # 2. Instala Node.js v22 (Resolve o erro EBADENGINE)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 3. Gera a Cobrinha (Snake)
       - uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -23,7 +29,12 @@ jobs:
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      # 3. Gera os Stats (Salva na pasta 'dist')
+      # 4. DESTRANCA A PASTA (Resolve o erro EACCES)
+      # Como a cobrinha roda em container, ela bloqueia a pasta. Isso libera.
+      - name: Fix permissions
+        run: sudo chmod -R 777 dist
+
+      # 5. Gera os Stats (Agora com permissão de escrita)
       - name: Generate Stats
         uses: readme-tools/github-readme-stats-action@v1
         with:
@@ -32,7 +43,7 @@ jobs:
           options: username=${{ github.repository_owner }}&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true
           path: dist/stats.svg 
 
-      # 4. Gera o Top Langs (Salva na pasta 'dist')
+      # 6. Gera o Top Langs
       - name: Generate Top Langs
         uses: readme-tools/github-readme-stats-action@v1
         with:
@@ -41,7 +52,7 @@ jobs:
           options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&theme=tokyonight
           path: dist/top-langs.svg
 
-      # 5. Envia TUDO que está na pasta 'dist' para a branch 'output'
+      # 7. Envia TUDO para a branch 'output'
       - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
