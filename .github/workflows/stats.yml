@@ -1,0 +1,42 @@
+name: Generate Readme Stats
+
+on:
+  schedule:
+    - cron: "0 */12 * * *" # Roda a cada 12 horas
+  workflow_dispatch: # Permite rodar manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Gera os Stats Gerais
+      - name: Generate Stats
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: stats
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Aqui estão as suas configurações originais (tokyonight, etc)
+          options: username=jnz1&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true
+          path: output/stats.svg
+
+      # 2. Gera os Top Langs
+      - name: Generate Top Langs
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: top-langs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          options: username=jnz1&layout=compact&langs_count=6&theme=tokyonight
+          path: output/top-langs.svg
+
+      # 3. Salva as imagens na branch "output" (igual a cobrinha)
+      - name: Push to output branch
+        uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output
+          build_dir: output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
