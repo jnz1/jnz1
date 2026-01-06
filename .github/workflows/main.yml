@@ -1,0 +1,50 @@
+name: Generate Everything (Snake & Stats)
+
+on:
+  schedule:
+    - cron: "0 */12 * * *" # Roda a cada 12 horas
+  workflow_dispatch: # Permite rodar manualmente
+
+jobs:
+  build:
+    name: Update Data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # 1. Baixa o repositório
+      - uses: actions/checkout@v4
+
+      # 2. Gera a Cobrinha (Salva na pasta 'dist')
+      - uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      # 3. Gera os Stats (Salva na pasta 'dist')
+      - name: Generate Stats
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: stats
+          token: ${{ secrets.GITHUB_TOKEN }}
+          options: username=${{ github.repository_owner }}&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true
+          path: dist/stats.svg 
+
+      # 4. Gera o Top Langs (Salva na pasta 'dist')
+      - name: Generate Top Langs
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: top-langs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&theme=tokyonight
+          path: dist/top-langs.svg
+
+      # 5. Envia TUDO que está na pasta 'dist' para a branch 'output'
+      - uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
