@@ -11,18 +11,7 @@
     <img height="180em" src="https://github.com/jnz1/jnz1/raw/output/top-langs.svg" alt="João's Top Languages"/>
   </div>
 
-  <br/><br/>
-
-  <div style="display: inline_block">
-    <img align="center" alt="Js" height="35" width="45" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-plain.svg" style="margin: 0 5px;">
-    <img align="center" alt="HTML" height="35" width="45" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg" style="margin: 0 5px;">
-    <img align="center" alt="CSS" height="35" width="45" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg" style="margin: 0 5px;">
-    <img align="center" alt="Python" height="35" width="45" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="margin: 0 5px;">
-  </div>
-
-  <br/><br/>
-
-  <h3>📫 Connect with me</h3>
+  <h3>Connect with me</h3>
   <div>
     <a href="https://instagram.com/ojoaonunez" target="_blank">
       <img src="https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white" target="_blank">
