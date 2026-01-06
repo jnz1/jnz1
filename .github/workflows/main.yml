@@ -1,4 +1,4 @@
-name: Ultimate Profile Engine (Stable)
+name: Generate Everything (Snake & Stats)
 
 on:
   schedule:
@@ -7,14 +7,18 @@ on:
 
 jobs:
   build:
-    name: Build Dashboard
+    name: Update Data
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      # 1. GERA A COBRINHA (Cria a pasta 'dist')
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -22,36 +26,25 @@ jobs:
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      # 2. LIBERA PERMISSÕES (Crucial para salvar os próximos arquivos)
       - name: Fix permissions
         run: sudo chmod -R 777 dist
 
-      # 3. GERA OS STATS (Confiável)
-      - name: Generate Core Stats
+      - name: Generate Stats
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: stats
           token: ${{ secrets.GITHUB_TOKEN }}
-          options: username=${{ github.repository_owner }}&show_icons=true&theme=transparent&include_all_commits=true&count_private=true&hide_border=true&title_color=0077B5&text_color=F7F7F7&icon_color=E4405F
+          options: username=${{ github.repository_owner }}&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true
           path: dist/stats.svg 
 
-      # 4. GERA TOP LANGS (Confiável e Animado)
-      # Voltamos para o plugin padrão que funciona sempre
       - name: Generate Top Langs
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: top-langs
           token: ${{ secrets.GITHUB_TOKEN }}
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&theme=transparent&hide_border=true&title_color=0077B5&text_color=F7F7F7
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&theme=tokyonight
           path: dist/top-langs.svg
 
-      # 5. BAIXA O ACTIVITY GRAPH (O Pulo do Gato)
-      # Baixamos a imagem gerada externamente e salvamos localmente
-      - name: Download Activity Graph
-        run: |
-          curl -o dist/activity.svg "https://github-readme-activity-graph.vercel.app/graph?username=${{ github.repository_owner }}&theme=tokyo-night&bg_color=00000000&hide_border=true&color=39FF14&line=39FF14&point=F7F7F7&area=true"
-
-      # 6. SALVA TUDO NA BRANCH OUTPUT
       - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
